@@ -10,6 +10,7 @@ from . import defs
 
 # WS SERVER
 CONN_WS_CLIENTS = set()
+WS_PORT = 8019
 
 async def handle_new_image_event(flas_appd):
    while True:
@@ -65,8 +66,8 @@ async def run_server(flask_appd):
               
    while True:
       try:
-         async with websockets.serve(handler, "localhost", 8019):
-            print("WebSocket server started on ws://localhost:4999")
+         async with websockets.serve(handler, "localhost", WS_PORT):
+            print(f"WebSocket server started on ws://localhost:WS_PORT")
             await asyncio.Future()  # Run forever
          return
       except Exception as ex:
