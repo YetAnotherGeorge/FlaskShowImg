@@ -13,7 +13,6 @@ from . import consts
 # WS SERVER
 CONN_WS_CLIENTS = set()
 
-
 async def handle_new_image_event(flask_appd):
    while True:
       print(f"NEW_IMG_EVENT: Waiting")
