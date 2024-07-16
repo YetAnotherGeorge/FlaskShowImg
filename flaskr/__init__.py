@@ -71,7 +71,11 @@ def create_app(test_config=None) -> Flask:
    @appd.flask_app.route("/index")
    def f_index_1():
       print(f"FLASK: /index/0")
-      return render_template("index.html", available_image_count=appd.available_image_count, image_to_request=0)
+      return render_template("index.html", 
+                             available_image_count=appd.available_image_count, 
+                             image_to_request=0,
+                             ws_host=consts.WS_HOST,
+                             ws_port=consts.WS_PORT)
    
    @appd.flask_app.route("/index/<int:img_to_request>")
    def f_index_2(img_to_request):

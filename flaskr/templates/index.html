@@ -20,6 +20,7 @@
 <script>
    const imageToRequest = parseInt("{{image_to_request}}");
    const wsHostPort = "{{ws_host}}:{{ws_port}}";
+   window.wsHostPort = wsHostPort;
    window.imageToRequest = imageToRequest;
 
    const divFrame = document.getElementById("image-frame")
