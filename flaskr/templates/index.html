@@ -114,7 +114,7 @@
    new Promise(async () => {
       while (true) {
          console.log("Registering socket")
-         const socket = new WebSocket('ws://localhost:4999');
+         const socket = new WebSocket('ws://localhost:8019');
          await new Promise((resolve) => socket_reg(socket, resolve));
          console.log("Socket connection failed")
          await new Promise(t => setTimeout(t, 3000))

@@ -65,7 +65,7 @@ async def run_server(flask_appd):
               
    while True:
       try:
-         async with websockets.serve(handler, "localhost", 4999):
+         async with websockets.serve(handler, "localhost", 8019):
             print("WebSocket server started on ws://localhost:4999")
             await asyncio.Future()  # Run forever
          return
