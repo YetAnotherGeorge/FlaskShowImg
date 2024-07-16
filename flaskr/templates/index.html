@@ -19,7 +19,7 @@
 
 <script>
    const imageToRequest = parseInt("{{image_to_request}}");
-   const wsHost = "{{ws_host}}:{{ws_port}}";
+   const wsHostPort = "{{ws_host}}:{{ws_port}}";
    window.imageToRequest = imageToRequest;
 
    const divFrame = document.getElementById("image-frame")
@@ -115,7 +115,7 @@
    new Promise(async () => {
       while (true) {
          console.log("Registering socket")
-         const socket = new WebSocket('ws://localhost:8019');
+         const socket = new WebSocket(`ws://${wsHostPort}`);
          await new Promise((resolve) => socket_reg(socket, resolve));
          console.log("Socket connection failed")
          await new Promise(t => setTimeout(t, 3000))
