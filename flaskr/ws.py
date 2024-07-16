@@ -68,8 +68,8 @@ async def run_server(flask_appd):
               
    while True:
       try:
-         async with websockets.serve(handler, "localhost", consts.WS_PORT):
-            print(f"WebSocket server started on ws://localhost:{consts.WS_PORT}")
+         async with websockets.serve(handler, "0.0.0.0", consts.WS_PORT):
+            print(f"WebSocket server started on ws://0.0.0.0:{consts.WS_PORT}")
             await asyncio.Future()  # Run forever
          return
       except Exception as ex:
