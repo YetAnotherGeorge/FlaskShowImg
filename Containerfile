@@ -1,5 +1,4 @@
 FROM continuumio/miniconda3
-ARG VERSION="v1.0.0"
 
 RUN apt update -y && apt upgrade -y && apt clean
 RUN apt install -y git
