@@ -1,0 +1,54 @@
+body {
+   background: rgb(40, 40, 40);
+   color: white;
+   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.history-container {
+   padding: 10px 20px;
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   align-content: center;
+   justify-content: center;
+   align-items: center;
+   gap: 13px;
+   background-color: #2c3332;
+   position: fixed;
+   top: 0;
+   left: 0;
+   height: 42px;
+   right: 0;
+}
+.history-btn {
+   width: 59px;
+   height: 27px;
+   background-color: #536768;
+   color: white;
+   border-radius: 15px;
+   font-size: 20px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   cursor: pointer;
+   user-select: none;
+}
+
+#image-frame {
+   overflow: hidden;
+   border: 1px solid gray;
+   position: fixed;
+   top: 73px;
+   bottom: 10px;
+   left: 10px;
+   right: 10px;
+   display: flex;
+   justify-content: center;
+   align-content: center;
+   align-items: center;
+}
+#image-frame img {
+   max-width: 100%;
+   max-height: 100%;
+   aspect-ratio: initial;
+}

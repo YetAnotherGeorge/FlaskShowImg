@@ -1,0 +1,123 @@
+<!doctype html>
+
+<head>
+   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico')}}">
+   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<html>
+   <body>
+      
+      <div class="history-container">
+         {% for id in range(available_image_count) %}
+            <div id="history-select-{{id}}" class="history-btn"> {{ id }} </div>
+         {% endfor %}
+      </div>
+
+      <div id="image-frame"></div>
+   </body>
+</html>
+
+<script>
+   const imageToRequest = {{image_to_request}};
+   window.imageToRequest = imageToRequest;
+
+   const divFrame = document.getElementById("image-frame")
+   let currentSelection = -1; 
+
+   const changeSelection = (imgBase64, currentSelectionNew) => {
+      console.log(`Change selection: ${currentSelection} -> ${currentSelectionNew}; IMG: ${imgBase64.length} bytes`)
+      currentSelection = currentSelectionNew;
+
+      const imgElement = document.createElement('img');
+      imgElement.src = `data:image/png;base64,${imgBase64}`;
+      
+      while (divFrame.firstChild) {
+         divFrame.removeChild(divFrame.lastChild);
+      }
+      divFrame.appendChild(imgElement);
+   }
+
+   
+   const socket_reg = (socket, closedCb) => {
+      socket.addEventListener('open', (event) => {
+         console.log('Connected to WebSocket server. Requesting latest');
+
+         const json_req_str = JSON.stringify({
+            event: "SELECT",
+            data: {
+               item: imageToRequest
+            }});
+         console.log(`REQ: ${json_req_str}`)
+         socket.send(json_req_str)
+      });
+      socket.addEventListener('close', (event) => {
+         console.log('Disconnected from WebSocket server');
+         closedCb()
+         socket.close()
+      });
+      socket.addEventListener('error', (event) => {
+         console.error('WebSocket error:', event);
+         closedCb()
+         socket.close()
+      });
+   
+      socket.addEventListener('message', (event) => {
+         const e = JSON.parse(event.data);
+         console.log(e);
+         switch (e.event) {
+            case "SELECT_RESP": {
+               changeSelection(e.data.imgBase64, e.data.currentSelection);
+               break;
+            }
+            case "UPDATE": {
+               const url = `/index/0`
+               console.log(`GET "${url}"`)
+               window.location = url;
+               break;
+            }
+            default: {
+               console.log(`RECV Unknown Message: ${event.data}`)
+               break;
+            }
+         }
+      });
+   
+      const doc_click_listener = (e) => {
+         let targetId = "" + e.target.id;
+         let matchRes = /^history\-select\-(\d+)$/.exec(targetId)
+         if (matchRes != null) {
+            si = parseInt(matchRes[1]); // selected id
+            e.stopPropagation()
+            if (currentSelection != si) {
+               console.log(`History select ${currentSelection} -> ${si}`)
+               currentSelection = si; // also set when data is recv
+               
+               const json_req_str = JSON.stringify({
+                  event: "SELECT",
+                  data: {
+                     item: currentSelection
+                  }});
+               console.log(`REQ: ${json_req_str}`)
+               socket.send(json_req_str)
+            }
+         }
+      };
+      document.addEventListener("click", doc_click_listener);
+      socket.addEventListener('close', (event) => {
+        document.removeEventListener("click", doc_click_listener);
+      });
+      socket.addEventListener('error', (event) => {
+         document.removeEventListener("click", doc_click_listener);
+      });
+   };
+
+   new Promise(async () => {
+      while (true) {
+         console.log("Registering socket")
+         const socket = new WebSocket('ws://localhost:4999');
+         await new Promise((resolve) => socket_reg(socket, resolve));
+         console.log("Socket connection failed")
+         await new Promise(t => setTimeout(t, 3000))
+      }
+   });
+</script>
