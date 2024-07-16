@@ -1,0 +1,5 @@
+DEPLOY (LOCAL)
+   waitress-serve --port=8020 --call 'flaskr:create_app'
+
+DEV (LOCAL)
+   flask --app FOLDER_NAME (--debug) run
