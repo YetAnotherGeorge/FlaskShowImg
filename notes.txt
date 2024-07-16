@@ -1,5 +1,6 @@
 DEPLOY (LOCAL)
    waitress-serve --port=8020 --call 'flaskr:create_app'
+   podman build . -t flaskshowimg && podman-compose up -d --force-recreate
 
 DEV (LOCAL)
    flask --app FOLDER_NAME (--debug) run

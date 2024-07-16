@@ -1,8 +1,8 @@
 version: '3'
 services:
-  paperless-management:
-    container_name: python-show-img
-    image: localhost/python-show-img:latest
+  flask-img:
+    container_name: flask-img
+    image: localhost/flaskshowimg:latest
     ports:
       - 8019:8019 # WS
       - 8020:8020 # HTTP
