@@ -4,8 +4,10 @@ import sqlite3
 import asyncio
 import threading
 import base64
+
 from . import ws
-from . import defs
+from . import events
+from . import consts
 
 
 class FlaskApplication:
@@ -74,7 +76,11 @@ def create_app(test_config=None) -> Flask:
    @appd.flask_app.route("/index/<int:img_to_request>")
    def f_index_2(img_to_request):
       print(f"FLASK: /index/{img_to_request}")
-      return render_template("index.html", available_image_count=appd.available_image_count, image_to_request=img_to_request)
+      return render_template("index.html", 
+                             available_image_count=appd.available_image_count, 
+                             image_to_request=img_to_request,
+                             ws_host=consts.WS_HOST,
+                             ws_port=consts.WS_PORT)
    
    
    @appd.flask_app.route("/ingest/new-image", methods=["POST"])
@@ -88,8 +94,8 @@ def create_app(test_config=None) -> Flask:
          img_count = cursor.execute(""" SELECT count() FROM history""").fetchone()[0]
          if type(img_count) != int: 
             raise TypeError(f"Expected int, but got {type(img_count)}")
-         if img_count > defs.MAX_DB_IMAGE_COUNT:
-            print(f"DB: Image count: {img_count} - {defs.MAX_DB_IMAGE_COUNT} => rem {img_count - defs.MAX_DB_IMAGE_COUNT}")
+         if img_count > consts.MAX_DB_IMAGE_COUNT:
+            print(f"DB: Image count: {img_count} - {consts.MAX_DB_IMAGE_COUNT} => rem {img_count - consts.MAX_DB_IMAGE_COUNT}")
             cursor.execute(""" 
                            DELETE FROM history
                            WHERE id IN (
@@ -97,13 +103,13 @@ def create_app(test_config=None) -> Flask:
                               ORDER BY id
                               LIMIT ?
                            );
-                           """, (img_count - defs.MAX_DB_IMAGE_COUNT,))
-            img_count = defs.MAX_DB_IMAGE_COUNT
+                           """, (img_count - consts.MAX_DB_IMAGE_COUNT,))
+            img_count = consts.MAX_DB_IMAGE_COUNT
          
          appd.db_connection.commit()
          print(f"DB: added image - new count: {img_count}")
          appd.available_image_count = img_count
-         defs.NEW_IMG_EVENT.set()
+         events.NEW_IMG_EVENT.set()
          return "OK"
       else:
          print(f"FLASK: /ingest/new-image invalid data: {type(request.data)}")

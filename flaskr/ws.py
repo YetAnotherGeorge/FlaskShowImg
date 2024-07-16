@@ -6,16 +6,18 @@ import base64
 import json
 import threading
 from types import SimpleNamespace
-from . import defs
+
+from . import events
+from . import consts
 
 # WS SERVER
 CONN_WS_CLIENTS = set()
-WS_PORT = 8019
 
-async def handle_new_image_event(flas_appd):
+
+async def handle_new_image_event(flask_appd):
    while True:
       print(f"NEW_IMG_EVENT: Waiting")
-      defs.NEW_IMG_EVENT.wait()
+      events.NEW_IMG_EVENT.wait()
       print(f"NEW_IMG_EVENT: Triggered")
       
       for c in CONN_WS_CLIENTS.copy():
@@ -26,7 +28,7 @@ async def handle_new_image_event(flas_appd):
             print(f"Error broadcasting to client: {e}; Removing")
             CONN_WS_CLIENTS.remove(c)
       
-      defs.NEW_IMG_EVENT.clear()
+      events.NEW_IMG_EVENT.clear()
    
 async def run_server(flask_appd):
    async def handler(websocket, path):
@@ -66,8 +68,8 @@ async def run_server(flask_appd):
               
    while True:
       try:
-         async with websockets.serve(handler, "localhost", WS_PORT):
-            print(f"WebSocket server started on ws://localhost:WS_PORT")
+         async with websockets.serve(handler, consts.WS_HOST, consts.WS_PORT):
+            print(f"WebSocket server started on ws://localhost:{consts.WS_PORT}")
             await asyncio.Future()  # Run forever
          return
       except Exception as ex:

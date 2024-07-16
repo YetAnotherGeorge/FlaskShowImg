@@ -18,7 +18,8 @@
 </html>
 
 <script>
-   const imageToRequest = {{image_to_request}};
+   const imageToRequest = parseInt("{{image_to_request}}");
+   const wsHost = "{{ws_host}}:{{ws_port}}";
    window.imageToRequest = imageToRequest;
 
    const divFrame = document.getElementById("image-frame")
